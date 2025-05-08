@@ -40,7 +40,7 @@ The server will be available at http://localhost:8080.
 
 - [ ] Support for other schemes (e.g. hotp)
 
-- [ ] Web UI to simplify link creation
+- [X] Web UI to simplify link creation
 
 ## :page_facing_up: License
 This project is licensed under the MIT License - see the [LICENSE](/LICENSE) file for details.

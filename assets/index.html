@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OTP Link Generator</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .description {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #666;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 20px 0;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .output {
+            margin-top: 20px;
+            display: none;
+        }
+        .output-title {
+            font-weight: 500;
+            margin-bottom: 10px;
+        }
+        .output-link {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            word-break: break-all;
+            border: 1px solid #ddd;
+        }
+        .output-link a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        .output-link a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>OTP Link Generator</h1>
+    <p class="description">
+        This tool generates otpauth:// links for use with two-factor authentication apps like Google Authenticator or Authy.
+    </p>
+
+    <div class="form-container">
+        <div class="form-group">
+            <label for="label">Label</label>
+            <input type="text" id="label" placeholder="user@example.com">
+        </div>
+        <div class="form-group">
+            <label for="issuer">Issuer</label>
+            <input type="text" id="issuer" placeholder="MyCompany">
+        </div>
+        <div class="form-group">
+            <label for="secret">Secret</label>
+            <input type="text" id="secret" placeholder="Base32 encoded secret">
+        </div>
+
+        <button id="generate-btn">Generate Link</button>
+    </div>
+
+    <div class="output" id="output">
+        <div class="output-title">Generated OTP Link:</div>
+        <div class="output-link" id="output-link"></div>
+        <div class="output-title">Shortener Link:</div>
+        <div class="output-link" id="output-my-link"></div>
+    </div>
+
+    <script>
+        function toBase64(data){
+            return btoa(unescape(encodeURIComponent(data)))
+        }
+
+        document.getElementById('generate-btn').addEventListener('click', function() {
+            const label = encodeURIComponent(document.getElementById('label').value.trim());
+            const issuer = encodeURIComponent(document.getElementById('issuer').value.trim());
+            const secret = encodeURIComponent(document.getElementById('secret').value.trim());
+
+            if (!label || !issuer || !secret) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            const otpLink = `otpauth://totp/${issuer}:${label}?secret=${secret}&issuer=${issuer}`;
+            const otpMyLink = `${window.location.href}${toBase64(label+":"+secret+":"+issuer)}`;
+            
+            const outputDiv = document.getElementById('output');
+            const outputLink = document.getElementById('output-link');
+            const outputMyLink = document.getElementById('output-my-link');
+            
+            outputLink.innerHTML = `<a href="${otpLink}">${otpLink}</a>`;
+            outputDiv.style.display = 'block';
+
+            outputMyLink.innerHTML = `<a href="${otpMyLink}">${otpMyLink}</a>`;
+            outputMyLink.style.display = 'block';
+        });
+    </script>
+</body>
+</html>
